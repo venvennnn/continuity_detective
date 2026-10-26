@@ -1,0 +1,10 @@
+{
+  "status": "template_not_validation_evidence",
+  "cases": [
+    {"id": "same-wardrobe", "file": "data/validation/same.mp4", "expected": "no_difference_flagged"},
+    {"id": "changed-colour", "file": "data/validation/change.mp4", "expected": "difference"},
+    {"id": "occluded", "file": "data/validation/occlusion.mp4", "expected": "not_assessable"}
+  ],
+  "required_additional_cases": ["pose-light-variation", "intentional-transition", "later-drift", "blur", "small-subject", "multiple-person"],
+  "note": "Fill in actual footage provenance and labels; these paths are placeholders, not completed tests."
+}

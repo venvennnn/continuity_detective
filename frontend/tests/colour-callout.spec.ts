@@ -1,0 +1,21 @@
+import {test,expect} from '@playwright/test'
+
+test('real cuts show prominent measured grey-to-white and white-to-red callouts',async({page})=>{
+  await page.goto('/')
+  await page.getByRole('button',{name:'Review reference'}).click()
+  await page.getByRole('button',{name:'Use this reference',exact:true}).click()
+  await expect(page.locator('.findings-summary')).toContainText('34 flagged samples',{timeout:60000})
+  await page.locator('.finding-main').first().click()
+  await expect(page.locator('.wardrobe-callout')).toBeVisible()
+  await expect(page.locator('.colour-transition')).toHaveText(/Grey.*White/)
+  await expect(page.locator('.colour-proof img')).toHaveCount(2)
+  await page.screenshot({path:'test-results/grey-to-white.png',fullPage:true})
+  await page.locator('.finding-main').nth(1).click()
+  await expect(page.locator('.colour-transition')).toHaveText(/White.*Red/)
+  await expect(page.locator('.colour-source')).toContainText('Active reference: Grey')
+  await page.screenshot({path:'test-results/white-to-red.png',fullPage:true})
+  await page.setViewportSize({width:390,height:844})
+  await expect.poll(()=>page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBeTruthy()
+  await expect(page.locator('.wardrobe-callout')).toBeVisible()
+  await page.screenshot({path:'test-results/colour-mobile.png',fullPage:true})
+})
