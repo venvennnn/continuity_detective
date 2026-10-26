@@ -137,6 +137,7 @@
   margin-top: 18px;
   font: italic clamp(64px, 11vw, 148px)/.78 var(--display);
   letter-spacing: -.06em;
+  word-spacing: .12em;
   font-weight: 400;
 }
 
