@@ -95,7 +95,7 @@ Record the approved real-footage demo locally. Submission requires a short video
 
 Implements `prd.md > Screens and Layout` and `Look and Feel`.
 
-Plain CSS variables: white `#ffffff`, charcoal `#111111`, muted text `#6b665f`, dividers `#eeeeee`, annotation red `#ba1a1a`. One-page editorial workbench: sticky header, large display headline, measured stats, a horizontal shot reel, then the player and findings. Pill controls, quiet white panels, restrained motion (hero rise, marquee, hover lift, pointer glow). Honour `prefers-reduced-motion`. System-plus-bundled sans for display, system monospace for timestamps; no required remote font.
+Plain CSS variables: white `#ffffff`, charcoal `#0c0b0a`, muted text `#6b665f`, dividers `#e8e4dc`, annotation red `#c31212`. One-page cinematic white workbench: title-card serif hero, film-frame shot reel, widescreen player, findings as intertitles. Bundled Instrument Serif / Cormorant for display, quiet grain and rise motion. Honour `prefers-reduced-motion`. No required remote font.
 
 Desktop: full-width hero and shot reel, large evidence/player centre, findings to the right, timeline beneath evidence. Reference confirmation uses the central preview and filmstrip. Stack panels on narrow screens; the shot reel becomes a horizontal snap scroller. Pair status colour with text. Overlay coordinates account for portrait orientation and letterboxing. Provide labelled keyboard-operable controls and numeric crop adjustment alongside drag handles.
 
