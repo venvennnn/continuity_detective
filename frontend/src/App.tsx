@@ -9,7 +9,11 @@ import ReferenceEditor from './components/ReferenceEditor'
 import EvidencePlayer from './components/EvidencePlayer'
 import EvidenceImage from './components/EvidenceImage'
 import WardrobeCallout from './components/WardrobeCallout'
+import { MagneticButton } from './motion'
+import { usePointerGlow } from './usePointerGlow'
 import './App.css'
+
+const TICKER = ['Inspect', 'Compare', 'Decide', 'Local only', 'Wardrobe continuity', 'Evidence first', 'Creator review']
 
 export default function App() {
   const [p, dispatch] = useReducer(projectReducer, undefined, emptyProject)
@@ -31,6 +35,7 @@ export default function App() {
   const [pauseOnFinding, setPauseOnFinding] = useState(false)
   const player = useRef<HTMLVideoElement>(null), fileInput = useRef<HTMLInputElement>(null)
   const pausedShots = useRef(new Set<string>())
+  const glow = usePointerGlow()
   const current = !!p.analysis && p.analysedRevision === p.revision
   const results = useMemo(() => p.analysis?.results || [], [p.analysis])
   const selected = results.find(f => f.id === selectedId) || results.find(f => f.status === 'difference') || results[0]
@@ -204,14 +209,31 @@ export default function App() {
   },[filter,p.history,results,p.reviews])
 
   return <div className="app-shell">
-    <header className="topbar"><a className="brand" href="#" onClick={e=>{e.preventDefault();setTab('sequence')}}><span className="brand-mark">◎</span> CONTINUITY DETECTIVE</a><span className="header-divider"/><span className="mono header-project">{p.name}</span><div className="topbar-right"><span className="save-status"><i/>{saveState}</span><button onClick={()=>{void download()}} disabled={!current||!!busy}>↗ Export findings</button></div></header>
-    <div className="page-title"><div><div className="eyebrow">Inspection studio <span>/</span> Wardrobe continuity</div><h1>Every shot. Same story<span>.</span></h1></div><div className="sequence-facts"><div><strong>{String(p.clips.length).padStart(2,'0')}</strong><span>SHOTS</span></div><div><strong>{timecode(totalMs).slice(0,5)}</strong><span>SEQUENCE</span></div><div><strong>{current?p.analysis?.coverage.samples:'—'}</strong><span>FRAMES ASSESSED</span></div></div></div>
+    <div className="pointer-glow" ref={glow} aria-hidden="true" />
+    <header className="topbar"><a className="brand" href="#" onClick={e=>{e.preventDefault();setTab('sequence')}}><span className="brand-mark">◎</span> CONTINUITY DETECTIVE</a><span className="header-divider"/><span className="mono header-project">{p.name}</span><div className="topbar-right"><span className="save-status"><i/>{saveState}</span><MagneticButton onClick={()=>{void download()}} disabled={!current||!!busy}>↗ Export findings</MagneticButton></div></header>
+    <section className="hero page-title">
+      <div className="hero-copy">
+        <div className="eyebrow">Inspection studio <span>/</span> Wardrobe continuity</div>
+        <h1>
+          <span className="hero-mask"><span className="hero-line">Every shot.</span></span>
+          <span className="hero-mask"><span className="hero-line">Same story<span>.</span></span></span>
+        </h1>
+        <p className="hero-lead">Confirm one wardrobe. Watch every cut against it. Footage stays on this computer.</p>
+      </div>
+      <div className="sequence-facts">
+        <div><strong>{String(p.clips.length).padStart(2,'0')}</strong><span>SHOTS</span></div>
+        <div><strong>{timecode(totalMs).slice(0,5)}</strong><span>SEQUENCE</span></div>
+        <div><strong>{current?p.analysis?.coverage.samples:'—'}</strong><span>FRAMES ASSESSED</span></div>
+      </div>
+    </section>
+    <div className="ticker" aria-hidden="true"><div className="ticker-track">{[0,1].map(copy => <div className="ticker-copy" key={copy}>{TICKER.map(item => <span key={`${copy}-${item}`}>{item}</span>)}</div>)}</div></div>
     {error&&<div className="message error" role="alert"><span>{error}</span><button onClick={()=>setError('')} aria-label="Dismiss error">×</button></div>}
     {!!missing.length&&<div className="message warning">Original media unavailable. Saved evidence and review remain visible.{p.clips.filter(c=>missing.includes(c.id)).map(c=><label className="relink" key={c.id}>Relink {c.filename}<input type="file" accept="video/*" onChange={e=>{if(e.target.files?.[0])void relink(c,e.target.files[0])}}/></label>)}</div>}
-    <div className="studio-grid"><aside className="shots-panel"><div className="section-heading"><h2>Shot sequence <span>({String(p.clips.length).padStart(2,'0')})</span></h2><button className="text-button" onClick={()=>fileInput.current?.click()} disabled={!!busy}>+ Import</button></div><input ref={fileInput} type="file" accept="video/*" multiple hidden onChange={e=>{void importFiles(e.target.files)}}/><p className="panel-description">Ordered clips. One continuous story.</p>
+    <section className="shots-panel"><div className="section-heading"><h2>Shot sequence <span>({String(p.clips.length).padStart(2,'0')})</span></h2><button className="text-button" onClick={()=>fileInput.current?.click()} disabled={!!busy}>+ Import</button></div><input ref={fileInput} type="file" accept="video/*" multiple hidden onChange={e=>{void importFiles(e.target.files)}}/><p className="panel-description">Ordered clips. One continuous story.</p>
       <div className="shot-list">{p.clips.map((clip,i)=>{const first=clip.samples[0],flagged=current&&differences.some(f=>f.candidate_evidence.clip_id===clip.id);return <article className={`shot-card ${activeEvidence?.clip_id===clip.id?'active':''}`} key={clip.id}><button className="shot-select" onClick={()=>{setSelectedFrame(first);seek(sequenceTime(p,clip.id,0))}}><div className="shot-image">{first&&<EvidenceImage evidence={first}/>}<span className="shot-number">{String(i+1).padStart(2,'0')}</span><span className="shot-duration">{clip.metadata.duration_ms/1000}s</span></div><div className="shot-info"><strong>{clip.filename}</strong><span className={`shot-state ${flagged?'red':''}`}>{flagged?'● Difference flagged':current?'○ Analysed samples':'○ Ready to inspect'}</span></div></button><div className="shot-footer"><span>{timecode(sequenceTime(p,clip.id,0))}</span><div><button aria-label={`Move ${clip.filename} earlier`} disabled={i===0||!!busy} onClick={()=>{void reorder(i,-1)}}>↑</button><button aria-label={`Move ${clip.filename} later`} disabled={i===p.clips.length-1||!!busy} onClick={()=>{void reorder(i,1)}}>↓</button></div></div></article>})}</div>
       {!p.clips.length&&<div className="empty-shots"><span>＋</span><p>Bring your shots into focus.</p><button onClick={()=>fileInput.current?.click()}>Import clips</button></div>}
-      <div className="shot-panel-bottom"><button onClick={()=>{void loadDemo()}} disabled={!!busy}>↺ Open supplied takes</button><span className="mono muted">UP TO 3 CLIPS · LOCAL PROCESSING</span></div></aside>
+      <div className="shot-panel-bottom"><button onClick={()=>{void loadDemo()}} disabled={!!busy}>↺ Open supplied takes</button><span className="mono muted">UP TO 3 CLIPS · LOCAL PROCESSING</span></div></section>
+    <div className="studio-grid">
       <main className="inspection-panel"><div className="viewer-toolbar"><div className="tabs"><button className={tab==='sequence'?'active':''} onClick={()=>setTab('sequence')}>Sequence playback</button><button className={tab==='evidence'?'active':''} onClick={()=>setTab('evidence')}>Evidence A/B</button></div><span className={`viewer-state ${current&&liveActionable?'red':''}`}><i/>{busy?'PROCESSING':current?liveActionable?'DIFFERENCE FLAGGED':'INSPECTION READY':'AWAITING REFERENCE'}</span></div>
         <div className="viewer-intro"><div><span className="eyebrow">{tab==='sequence'?'The complete sequence':'Side-by-side inspection'}</span><h2>{tab==='sequence'?'See the change in context.':'The evidence, frame for frame.'}</h2></div><span className="mono muted">{tab==='sequence'?'01 → 02 → 03':'REFERENCE / COMPARISON'}</span></div>
         {tab==='sequence'?<div className="sequence-player" data-testid="sequence-player">{p.sequence?<video ref={player} src={p.sequence.url} controls preload="auto" playsInline onTimeUpdate={e=>{if(!e.currentTarget.seeking)onTime(e.currentTarget.currentTime*1000)}} onSeeked={e=>onTime(e.currentTarget.currentTime*1000)} onPlay={()=>setPlaying(true)} onPause={()=>setPlaying(false)}/>:<div className="player-placeholder">{activeEvidence&&<EvidenceImage evidence={activeEvidence}/>}<div className="placeholder-caption">{busy?busy.label:p.clips.length?'Preparing continuous playback':'Import a sequence to begin'}</div></div>}

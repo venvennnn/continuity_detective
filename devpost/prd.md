@@ -34,7 +34,7 @@ Source: `scope.md > Inspiration & Identity`, plus the reference-confirmation int
 
 ## Look and Feel
 
-Follow `references/continuity-detective-visual-reference.html`: white/off-white surfaces, charcoal typography, thin dividers, square controls, restrained red annotations, shot list, large A/B frames, timeline, and findings panel. Use clear text labels alongside any status colours/icons. Do not copy its hard-coded percentages, detections, sharing actions, or regeneration controls.
+Follow a white one-page studio: charcoal typography, thin dividers, restrained red annotations, a horizontal shot reel, large A/B frames, timeline, and findings panel. Use generous display type, quiet motion, and clear text labels alongside any status colours/icons. Do not copy hard-coded percentages, detections, sharing actions, or regeneration controls from the supplied visual reference.
 
 Source: `scope.md > Inspiration & Identity`.
 
