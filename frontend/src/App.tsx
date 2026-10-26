@@ -209,14 +209,18 @@ export default function App() {
   },[filter,p.history,results,p.reviews])
 
   return <div className="app-shell">
+    <div className="film-grain" aria-hidden="true" />
     <div className="pointer-glow" ref={glow} aria-hidden="true" />
+    <div className="spine" aria-hidden="true">Observe — Compare — Decide</div>
+    <div className="watermark" aria-hidden="true">{String(p.clips.length).padStart(2,'0')}</div>
     <header className="topbar"><a className="brand" href="#" onClick={e=>{e.preventDefault();setTab('sequence')}}><span className="brand-mark">◎</span> CONTINUITY DETECTIVE</a><span className="header-divider"/><span className="mono header-project">{p.name}</span><div className="topbar-right"><span className="save-status"><i/>{saveState}</span><MagneticButton onClick={()=>{void download()}} disabled={!current||!!busy}>↗ Export findings</MagneticButton></div></header>
     <section className="hero page-title">
+      <p className="hero-kicker">A wardrobe continuity picture</p>
       <div className="hero-copy">
         <div className="eyebrow">Inspection studio <span>/</span> Wardrobe continuity</div>
         <h1>
-          <span className="hero-mask"><span className="hero-line">Every shot.</span></span>
-          <span className="hero-mask"><span className="hero-line">Same story<span>.</span></span></span>
+          <span className="hero-mask"><span className="hero-line">Every <em>shot</em></span></span>
+          <span className="hero-mask"><span className="hero-line">Same <em>story</em><span>.</span></span></span>
         </h1>
         <p className="hero-lead">Confirm one wardrobe. Watch every cut against it. Footage stays on this computer.</p>
       </div>

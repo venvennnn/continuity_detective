@@ -91,3 +91,5 @@ Activity mode: Planned focused alternative for a plan-first learner; reuse genui
 - Early hands-on feedback requested more apparent wardrobe differences directly in the video. Added prominent evidence-derived Grey → White and White → Red callouts, representative colour swatches and desktop before/after crop close-ups; retained the active-reference label separately from the adjacent-cut comparison. Overlay updates follow completed seeks and remain within the playing clip. Compact mobile treatment preserves the subject view. User retry is pending.
 
 - Learner asked to replace the cramped workbench chrome with a white Halo Lab–style one-pager: large display type, horizontal shot reel, animations, and more air. Inspection behaviour, labels, and test selectors stay the same; look-and-feel notes in the PRD and spec now describe this editorial layout.
+
+- Follow-up: the Halo-like pass still felt generic. Restyled as a cinematic white title sequence — italic display type, film-sprocket shot cards, widescreen player, grain, and intertitle findings — without changing inspection behaviour.
